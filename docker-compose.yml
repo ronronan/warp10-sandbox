@@ -1,0 +1,14 @@
+services:
+  warp10:
+    image: warp10io/warp10:2.11.0
+    container_name: warp10
+    volumes:
+      - warp10_data:/data
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    network_mode: bridge
+
+volumes:
+  warp10_data:
+    name: warp10_data
