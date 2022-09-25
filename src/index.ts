@@ -5,3 +5,4 @@ export function toto(): string {
   return 'toto';
 }
 
+console.log(test);
