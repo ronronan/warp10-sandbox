@@ -1,0 +1,17 @@
+{
+  "name": "warp10-sandbox",
+  "version": "1.0.0",
+  "private": "true",
+  "author": "Ronan MOREL",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@senx/warp10": "^1.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.20",
+    "typescript": "^4.8.3"
+  }
+}
