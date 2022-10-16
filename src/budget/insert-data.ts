@@ -1,7 +1,9 @@
 import fs from 'fs';
 import { parse } from 'csv-parse';
 import { Warp10Wrapper } from '../warp10.wrapper';
+import { DataPoint } from '@senx/warp10';
 
+const LIVRET_CLASSNAME = 'fr.ronanmorel.livret';
 interface IDataBudget {
   timestamp: number;
   label: string;
@@ -41,12 +43,34 @@ function readContentLivretCSV(fileName: string): Promise<IDataBudget[]> {
   });
 }
 
+function writeLivretToW10(w10: Warp10Wrapper, dataList: IDataBudget[]): Promise<void> {
+  return new Promise(async (resolve) => {
+    const w10DataList = dataList.map(d => ({
+      timestamp: d.timestamp,
+      className: LIVRET_CLASSNAME,
+      value: d.sum,
+      labels: { name: d.label }
+    } as DataPoint));
+    await w10.update(w10DataList);
+
+    const listLabel = [...new Set(dataList.map(d => d.label))].map(d => ({
+      className: LIVRET_CLASSNAME,
+      labels: { name: d },
+      attributes: { unit: '€' }
+    }));
+    await w10.meta(listLabel)
+    resolve();
+  });
+}
+
 module.exports = async (w10: Warp10Wrapper) => {
   console.log('Budget insert-data.ts');
   const livretFiles = ['2020-livret.csv', '2021-livret.csv', '2022-livret.csv']
 
+  const allData = [];
   for (const livretFile of livretFiles) {
     const result = await readContentLivretCSV(`./data/budget/${livretFile}`);
-    console.log(result);
+    allData.push(...result);
   }
+  await writeLivretToW10(w10, allData);
 }
